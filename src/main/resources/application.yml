@@ -1,0 +1,63 @@
+spring:
+  application:
+    name: banking-app
+
+  # Read database credentials from environment variables.
+  # DB_URL must point to the banking_p1 database.
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+
+    # HikariCP reuses database connections instead of opening
+    # a new connection for every operation.
+    hikari:
+      # Maximum number of connections in this application's pool.
+      maximum-pool-size: ${DB_POOL_MAX_SIZE:10}
+
+      # Target number of idle connections kept ready for use.
+      minimum-idle: ${DB_POOL_MIN_IDLE:5}
+
+      # Idle connections above minimum-idle become eligible
+      # for removal after 5 minutes.
+      idle-timeout: 300000
+
+      # Wait up to 20 seconds to obtain a connection from the pool.
+      connection-timeout: 20000
+
+      # Retire connections after approximately 20 minutes.
+      # Connections currently in use are retired after being returned.
+      max-lifetime: 1200000
+
+
+  # Run database/schema.sql manually.
+  # Disable Spring's automatic SQL script initialization.
+  sql:
+    init:
+      mode: never
+
+  # JPA and Hibernate configuration.
+  jpa:
+
+    hibernate:
+      # Validate entity mappings against the existing database schema.
+      # Fail startup on mapping mismatches; do not create or alter tables.
+      ddl-auto: validate
+
+    # Do not keep a persistence context open throughout web requests.
+    # Load required data and build DTOs within the service transaction.
+    open-in-view: false
+
+    # Disable Hibernate's direct printing of SQL statements.
+    # Separate logging configuration can still enable SQL logging.
+    show-sql: false
+
+    properties:
+      hibernate:
+        # Explicitly select PostgreSQL SQL syntax.
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+        # Format SQL for readability when SQL logging is enabled.
+        format_sql: true
